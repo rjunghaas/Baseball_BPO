@@ -1,0 +1,23 @@
+{
+  "name": "baseball_bpo_js",
+  "version": "1.0.0",
+  "description": "bpo calculator",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "aws-sdk": "*",
+    "body-parser": "*",
+    "browserify": "^14.3.0",
+    "cheerio": "*",
+    "csv-parse": "*",
+    "ejs": "*",
+    "express": "*",
+    "flux": "*",
+    "merge": "*",
+    "request": "*"
+  },
+  "author": "Ryan Jung",
+  "license": "ISC"
+}

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Ryan's Baseball BPO Site</title>
+  
+  <!-- CSS Style Sheet -->
+  <link rel="stylesheet" type="text/css" href="./views/content/application.css">
+  
+  <!-- React Files -->
+  <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+  <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  
+  <!-- JQuery File -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  
+</head>
+<body>
+	<div id="root"></div>
+	
+	<script type="text/babel">
+		ReactDOM.render(
+        	<h1>Calculate a Player's BPO+ for Any Year From 2016</h1>,
+        	document.getElementById('root')
+     	);
+	</script>
+	
+	<div id="form"></div>
+	
+	<script type="text/babel">
+	// Child component for textarea where user enters player's name
+	class TextArea extends React.Component{	
+		render() {
+			return (
+				<div>
+					<textarea placeholder="Enter Player's Name" value={this.props.value} onChange={this.props.onChange}></textarea>
+				</div>
+			);
+		}	
+	};
+	
+	// Child component for selection menu to set year
+	class YearSelect extends React.Component{
+		render() {
+			return(
+				<div>
+					<select value={this.props.value} onChange={this.props.onChange}>
+						<option value="2016">2016</option>
+					</select>
+				</div>
+			);
+		}
+	};
+	
+	// Child component for submit button which is wrapped in a form to use onSubmit method
+	class SubmitButton extends React.Component{	
+		render() {
+			return(
+				<div>
+					<form onSubmit={this.props.onSubmit}>
+						<button>Submit</button>
+					</form>
+				</div>
+			);
+		}
+	};
+	
+	// Parent component call Form which maintains state of our app
+	class Form extends React.Component{
+		
+		// Constructor function to set initial state variables
+		constructor(props, context) {
+			super(props, context);
+			this.state = {
+				name: null,
+				year: '2016',
+				text: '',
+				_dataSet: [''],
+				_preSearchData: null,
+				bpo: null,
+				lgbpo: null,
+				bpoPlus: null
+			};
+			
+			// Bind functions when they are passed to children components
+			this._textChangeHandler = this._textChangeHandler.bind(this);
+			this._onSelectChangeHandler = this._onSelectChangeHandler.bind(this);
+			this._submitHandler = this._submitHandler.bind(this);
+		}
+		
+		// Function for getting list of players in PlayerID database which is stored in state for performance reasons
+		componentDidMount() {
+			var self = this;
+			$(document).ready(function() {
+				$.ajax({
+                   	url: "players",
+                   	type: "GET",
+                   	dataType: "json",
+                   	success: function(result) {
+                   		console.log(result.data);
+                   		this.setState({
+                   			_dataSet: result.data
+                   		});
+                   	}.bind(self)
+                });
+            }.bind(self))
+		}
+		
+		// implement search function of hardcoded list of names; will later implement Store for _dataSet
+		_textChangeHandler(ev) {	
+			ev.preventDefault();
+			var text = ev.target.value.toLowerCase();
+				
+			if(!text) {
+				this.setState({
+					text: '',
+					name: this._preSearchData
+				});
+				return;
+			}
+			var searchdata = this.state._dataSet.filter(function(name) {
+				return name.toString().toLowerCase().indexOf(text) > -1;
+			});
+					
+			// Create array of search results
+			var sd = [];
+			for (var i = 0; i < searchdata.length; i++) {
+				sd.push(searchdata[i]);
+			}
+			
+			// Want to update this.state.text so that previous user input does not disappear	
+			this.setState({
+				text: text,
+				name: sd.slice(0,1)  // only show first result
+			});
+		}
+		
+		// Event handler for year select menu
+		_onSelectChangeHandler(event) {
+			event.preventDefault();
+			this.setState({
+				year: event.target.value
+			});
+		}
+		
+		// Handler for form submission
+		_submitHandler(e) {
+  			var self = this; // maintain pointer to Form after AJAX call
+  			e.preventDefault();
+  			
+  			var data = {
+    			name: this.state.name.toString(), // convert this.state.name from array to string
+    			year: this.state.year
+  			};
+
+  			// AJAX call to submit API, then set state variables from JSON result
+  			$.ajax({
+    			type: 'POST',
+    			url: 'submit',
+    			data: data
+  			})
+  			.done(function(data) {
+    			console.log(data);
+    			self.setState({
+					bpo: data["bpo"],
+					lgbpo: data["lgBPO"],
+					bpoPlus: data["bpoPlus"]
+				});
+  			})
+		}
+		
+		render() {
+			return(
+				<div>
+					<TextArea name="text" value={this.state.text} onChange={this._textChangeHandler} />
+					<h3>{this.state.name}</h3>
+					<p />
+					<YearSelect name="year" value={this.state.year} onChange={this._onSelectChangeHandler} />
+					<br />
+					<SubmitButton name="submit" onSubmit={this._submitHandler} />
+					<h3>BPO: {this.state.bpo}
+					<br />
+					lgBPO: {this.state.lgbpo}
+					<br />
+					BPO+: {this.state.bpoPlus}
+					</h3>
+				</div>
+			);
+		}
+	};
+	
+	ReactDOM.render(
+		React.createElement(Form),
+		document.getElementById("form")
+	);
+	</script>
+</body>
+</html>

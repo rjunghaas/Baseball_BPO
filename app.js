@@ -34,7 +34,7 @@ if(process.env.INIT) {
 
 // Base route for loading home page
 app.get('/', function(req, res) {
-	res.render('home.html');
+	res.render('home_flux.html');
 });
 
 // API call for returning a list of all players in the PlayerId database

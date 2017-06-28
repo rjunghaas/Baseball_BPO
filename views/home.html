@@ -97,7 +97,7 @@
 			var self = this;
 			$(document).ready(function() {
 				$.ajax({
-                   	url: "players",
+                   	url: "https://xegsms2vug.execute-api.us-west-2.amazonaws.com/prod/getPlayers",
                    	type: "GET",
                    	dataType: "json",
                    	success: function(result) {
@@ -160,7 +160,7 @@
   			// AJAX call to submit API, then set state variables from JSON result
   			$.ajax({
     			type: 'POST',
-    			url: 'submit',
+    			url: 'https://xegsms2vug.execute-api.us-west-2.amazonaws.com/prod/calcBPO',
     			data: data
   			})
   			.done(function(data) {

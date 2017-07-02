@@ -7,9 +7,9 @@ App makes use of several new technologies for me:
 - ReactJS (for front-end)
 - AWS Lambda with AWS API Gateway
 - CI/CD pipeline with AWS CodePipeline
+- Addition of Google Analytics tracking
 
 Later versions will include:
 - Implementation of Redux architecture in ReactJS front-end
-- Addition of Google Analytics
 
 Thanks for checking out my project!!

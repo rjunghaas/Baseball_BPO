@@ -5,11 +5,11 @@ Purpose of app is to scrape several websites using cheerio to collect stats on b
 App makes use of several new technologies for me:
 - DynamoDB (used local for development before pushing to web service)
 - ReactJS (for front-end)
+- AWS Lambda with AWS API Gateway
+- CI/CD pipeline with AWS CodePipeline
 
 Later versions will include:
-- Implementation of Flux architecture in ReactJS front-end
+- Implementation of Redux architecture in ReactJS front-end
 - Addition of Google Analytics
-- AWS Lambda with AWS API Service
-- CI/CD pipeline
 
 Thanks for checking out my project!!

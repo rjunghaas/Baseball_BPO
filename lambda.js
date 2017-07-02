@@ -12,25 +12,38 @@ var statsUrl3 = "&GameType=all&PlayedFor=0&PlayedVs=0&Park=0&PlayerID=";
 
 // API call for returning a list of all players in the PlayerId database
 exports.playerListHandler = function(event, context, callback) {
-	console.log(event.httpMethod);
 	switch (event.httpMethod) {
 		case 'GET':
 			dynamo.scanPlayerIdTable(function(res_arr) {
-				var output = { data: res_arr };
-				return(callback(null, output));
+				//var output = { data: res_arr };
+				return(callback(null, {
+        			statusCode: '200',
+        			body: JSON.stringify({data: res_arr}),
+        			headers: {
+            			'Content-Type': 'application/json',
+            			'Access-Control-Allow-Origin': '*',
+        			},
+        		}));
 			});
 			break;
 			
 		default:
-			return(callback(null, []));
+			return(callback(null, {
+        			statusCode: '200',
+        			body: JSON.stringify({data: []}),
+        			headers: {
+            			'Content-Type': 'application/json',
+            			'Access-Control-Allow-Origin': '*',
+        			},
+        	}));
 	}
 }
 
 // API call for computing player's BPO, BPO+, and lgBPO for given year
 exports.submitHandler = function(event, context, callback) {
 	// Gather player's name and year from POST body
-	var name = event.body.name;
-	var year = event.body.year;
+	var name = JSON.parse(event.body).name;
+	var year = JSON.parse(event.body).year;
 	
 	// construc start date
 	var sd = start_date + year;
@@ -42,7 +55,6 @@ exports.submitHandler = function(event, context, callback) {
 	switch(event.httpMethod) {
 		case 'POST':
 			// Get Player's ID from PlayerID database table
-			console.log("POST detected");
 			dynamo.queryPlayerIdTable(name, function(res) {
 				var id = res[name];
 		
@@ -63,7 +75,14 @@ exports.submitHandler = function(event, context, callback) {
 						
 							// Put results into JSON and return to front-end
 							var output = { bpo: bpo[1], lgBPO: lgBPO, bpoPlus: bpoPlus };
-							return(callback(null, output));
+							return(callback(null, {
+        						statusCode: '200',
+        						body: JSON.stringify({data: output}),
+        						headers: {
+            						'Content-Type': 'application/json',
+            						'Access-Control-Allow-Origin': '*',
+        						},
+        					}));
 						});
 					});
 				});
@@ -71,6 +90,13 @@ exports.submitHandler = function(event, context, callback) {
 			break;
 		
 		default:
-			return(callback(null, []));
+			return(callback(null, {
+        			statusCode: '500',
+        			body: JSON.stringify({data: []}),
+        			headers: {
+            			'Content-Type': 'application/json',
+            			'Access-Control-Allow-Origin': '*',
+        			},
+        	}));
 	}
 }

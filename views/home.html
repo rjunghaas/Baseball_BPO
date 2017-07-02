@@ -161,15 +161,20 @@
   			$.ajax({
     			type: 'POST',
     			url: 'https://xegsms2vug.execute-api.us-west-2.amazonaws.com/prod/calcBPO',
-    			data: data
-  			})
-  			.done(function(data) {
-    			console.log(data);
-    			self.setState({
-					bpo: data["bpo"],
-					lgbpo: data["lgBPO"],
-					bpoPlus: data["bpoPlus"]
-				});
+    			crossDomain: true,
+    			data: JSON.stringify(data),
+    			dataType: 'json',
+    			contentType: "application/json",
+    			success: function(result) {
+                    console.log(result.data);
+                   	console.log(self); // refers to Form object
+                   	this.setState({
+                   		bpo: result.data["bpo"],
+						lgbpo: result.data["lgBPO"],
+						bpoPlus: result.data["bpoPlus"]
+                   	});
+                   	console.log(this.state);
+                }.bind(this)
   			})
 		}
 		

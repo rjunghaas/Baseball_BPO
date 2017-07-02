@@ -18,6 +18,17 @@
   <!-- JQuery File -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   
+  <!-- Google Analytics Tracking Snippet -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-101976691-1', 'auto');
+  ga('send', 'pageview');
+  </script>
+  
 </head>
 <body>
 	<div id="root"></div>
@@ -97,7 +108,7 @@
 			var self = this;
 			$(document).ready(function() {
 				$.ajax({
-                   	url: "players",
+                   	url: "https://xegsms2vug.execute-api.us-west-2.amazonaws.com/prod/getPlayers",
                    	type: "GET",
                    	dataType: "json",
                    	success: function(result) {
@@ -160,17 +171,72 @@
   			// AJAX call to submit API, then set state variables from JSON result
   			$.ajax({
     			type: 'POST',
-    			url: 'submit',
-    			data: data
+    			url: 'https://xegsms2vug.execute-api.us-west-2.amazonaws.com/prod/calcBPO',
+    			crossDomain: true,
+    			data: JSON.stringify(data),
+    			dataType: 'json',
+    			contentType: "application/json",
+    			success: function(result) {
+                   	this.setState({
+                   		bpo: result.data["bpo"],
+						lgbpo: result.data["lgBPO"],
+						bpoPlus: result.data["bpoPlus"]
+                   	});
+                   
+                   	var todayDate = new Date();
+					var initialDate = ga.getByName('dimension1');
+					var submitCount = ga.getByName('dimension2');
+			
+					if (typeof initalDate != 'undefined') {
+						var daysSince = Math.abs(todayDate - initialDate);
+						ga('set', 'dimension3', daysSince);
+					} else {
+						ga('set', 'dimension1', todayDate);
+						ga('set', 'dimension3', 0);
+					}
+
+					if (typeof submitCount != 'undefined') {
+						sc = submitCount + 1;
+						ga('set', 'dimension2', sc);
+					} else {
+						ga('set', 'dimension2', 1);
+					}
+
+					ga('send', {
+						'hitType': 'event',
+						'eventCategory': 'submit',
+						'eventAction': 'submit'
+					});
+                }.bind(this)
   			})
-  			.done(function(data) {
-    			console.log(data);
-    			self.setState({
-					bpo: data["bpo"],
-					lgbpo: data["lgBPO"],
-					bpoPlus: data["bpoPlus"]
+  			
+  			// Code for Google Analytics Tracking
+  			/*ga(function(tracker) {
+  				var todayDate = new Date();
+				var initialDate = tracker.getByName('dimension1');
+				var submitCount = tracker.getgetByName('dimension2');
+			
+				if (typeof initalDate != 'undefined') {
+					var daysSince = Math.abs(todayDate - initialDate);
+					ga('set', 'dimension3', daysSince);
+				} else {
+					ga('set', 'dimension1', todayDate);
+					ga('set', 'dimension3', 0);
+				}
+
+				if (typeof submitCount != 'undefined') {
+					sc = submitCount + 1;
+					ga('set', 'dimension2', sc);
+				} else {
+					ga('set', 'dimension2', 1);
+				}
+
+				ga('send', {
+					'hitType': 'event',
+					'eventCategory': 'submit',
+					'eventAction': 'submit'
 				});
-  			})
+			});*/
 		}
 		
 		render() {

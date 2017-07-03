@@ -183,10 +183,12 @@
 						bpoPlus: result.data["bpoPlus"]
                    	});
                    
+                    // Code for Google Analytics Tracking
                    	var todayDate = new Date();
 					var initialDate = ga.getByName('dimension1');
 					var submitCount = ga.getByName('dimension2');
 			
+					// Add 'Days Since' dimension
 					if (typeof initalDate != 'undefined') {
 						var daysSince = Math.abs(todayDate - initialDate);
 						ga('set', 'dimension3', daysSince);
@@ -195,6 +197,7 @@
 						ga('set', 'dimension3', 0);
 					}
 
+					//  Keep counter of number of times user has submitted
 					if (typeof submitCount != 'undefined') {
 						sc = submitCount + 1;
 						ga('set', 'dimension2', sc);
@@ -202,6 +205,7 @@
 						ga('set', 'dimension2', 1);
 					}
 
+					// Send Submit event
 					ga('send', {
 						'hitType': 'event',
 						'eventCategory': 'submit',
@@ -209,34 +213,6 @@
 					});
                 }.bind(this)
   			})
-  			
-  			// Code for Google Analytics Tracking
-  			/*ga(function(tracker) {
-  				var todayDate = new Date();
-				var initialDate = tracker.getByName('dimension1');
-				var submitCount = tracker.getgetByName('dimension2');
-			
-				if (typeof initalDate != 'undefined') {
-					var daysSince = Math.abs(todayDate - initialDate);
-					ga('set', 'dimension3', daysSince);
-				} else {
-					ga('set', 'dimension1', todayDate);
-					ga('set', 'dimension3', 0);
-				}
-
-				if (typeof submitCount != 'undefined') {
-					sc = submitCount + 1;
-					ga('set', 'dimension2', sc);
-				} else {
-					ga('set', 'dimension2', 1);
-				}
-
-				ga('send', {
-					'hitType': 'event',
-					'eventCategory': 'submit',
-					'eventAction': 'submit'
-				});
-			});*/
 		}
 		
 		render() {

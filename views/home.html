@@ -108,7 +108,7 @@
 			var self = this;
 			$(document).ready(function() {
 				$.ajax({
-                   	url: "https://xegsms2vug.execute-api.us-west-2.amazonaws.com/prod/getPlayers",
+                   	url: "players",
                    	type: "GET",
                    	dataType: "json",
                    	success: function(result) {
@@ -171,12 +171,13 @@
   			// AJAX call to submit API, then set state variables from JSON result
   			$.ajax({
     			type: 'POST',
-    			url: 'https://xegsms2vug.execute-api.us-west-2.amazonaws.com/prod/calcBPO',
+    			url: 'submit',
     			crossDomain: true,
     			data: JSON.stringify(data),
     			dataType: 'json',
     			contentType: "application/json",
     			success: function(result) {
+                   	console.log(result);
                    	this.setState({
                    		bpo: result.data["bpo"],
 						lgbpo: result.data["lgBPO"],

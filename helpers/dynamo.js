@@ -299,5 +299,3 @@ exports.scanPlayerIdTable = function(callback) {
         }
     });
 }
- 
-	
